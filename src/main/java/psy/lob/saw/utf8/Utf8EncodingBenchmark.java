@@ -1,14 +1,17 @@
 package psy.lob.saw.utf8;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openjdk.jmh.annotations.GenerateMicroBenchmark;
 import org.openjdk.jmh.annotations.Scope;
@@ -17,49 +20,82 @@ import org.openjdk.jmh.annotations.State;
 
 @State(Scope.Thread)
 public class Utf8EncodingBenchmark  {
-	private final static String stringsFile = "/Utf8Samples.txt";
-	boolean direct = Boolean.getBoolean("Utf8EncodingBenchmark.directBuffer");
-	private ArrayList<String> strings = new ArrayList<String>();
-	private ByteBuffer dest;
+	// experiment test input
+	private List<String> strings = new ArrayList<String>();
+	
+	// CharsetEncoder helper buffers
 	private char[] chars;
 	private CharBuffer charBuffer;
 	private CharsetEncoder encoder;
+	
+	// My own encoder
 	private CustomUtf8Encoder customEncoder;
+	
+	// Destination buffer, the slayer
+	private ByteBuffer buffySummers;
 
 	@Setup
 	public void init() {
-		BufferedReader reader = null;
+		boolean useDirectBuffer = Boolean.getBoolean("Utf8EncodingBenchmark.directBuffer");
+		InputStream testTextStream = null;
+		InputStreamReader inStreamReader = null;
+		BufferedReader buffReader = null;
 		try {
-			InputStream resourceAsStream = getClass().getResourceAsStream(stringsFile);
-			reader = new BufferedReader(new InputStreamReader(
-					resourceAsStream, "UTF-8"));
+			testTextStream = getClass().getResourceAsStream("/Utf8Samples.txt");
+			inStreamReader = new InputStreamReader(
+					testTextStream, "UTF-8");
+			buffReader = new BufferedReader(inStreamReader);
 			String line;
-			while ((line = reader.readLine()) != null) {
+			while ((line = buffReader.readLine()) != null) {
 				strings.add(line);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} 
+		}
+		finally{
+			closeStream(testTextStream);
+			closeReader(inStreamReader);
+			closeReader(buffReader);
+		}
 
-		if (direct) {
-			dest = ByteBuffer.allocateDirect(4096);
+		if (useDirectBuffer) {
+			buffySummers = ByteBuffer.allocateDirect(4096);
 		} else {
-			dest = ByteBuffer.allocate(4096);
+			buffySummers = ByteBuffer.allocate(4096);
 		}
 		chars = new char[4096];
 		charBuffer = CharBuffer.wrap(chars);
 		encoder = Charset.forName("UTF-8").newEncoder();
 		customEncoder = new CustomUtf8Encoder();
-
 	}
+
+	private void closeStream(InputStream inStream) {
+	    if(inStream != null){
+	    	try {
+	            inStream.close();
+	        } catch (IOException e) {
+	        	throw new RuntimeException(e);
+	        }
+	    }
+    }
+
+	private void closeReader(Reader buffReader) {
+	    if(buffReader != null){
+	    	try {
+	            buffReader.close();
+	        } catch (IOException e) {
+	        	throw new RuntimeException(e);
+	        }
+	    }
+    }
 
 	@GenerateMicroBenchmark
 	public int customEncoder() {
 		int countBytes = 0;
 		for (int stringIndex = 0; stringIndex < strings.size(); stringIndex++) {
-			customEncoder.encodeString(strings.get(stringIndex), dest);
-			countBytes += dest.position();
-			dest.clear();
+			customEncoder.encodeString(strings.get(stringIndex), buffySummers);
+			countBytes += buffySummers.position();
+			buffySummers.clear();
 		}
 		return countBytes;
 	}
@@ -68,9 +104,9 @@ public class Utf8EncodingBenchmark  {
 	public int stringGetBytes() throws UnsupportedEncodingException {
 		int countBytes = 0;
 		for (int stringIndex = 0; stringIndex < strings.size(); stringIndex++) {
-			dest.put(strings.get(stringIndex).getBytes("UTF-8"));
-			countBytes += dest.position();
-			dest.clear();
+			buffySummers.put(strings.get(stringIndex).getBytes("UTF-8"));
+			countBytes += buffySummers.position();
+			buffySummers.clear();
 		}
 		return countBytes;
 	}
@@ -84,9 +120,9 @@ public class Utf8EncodingBenchmark  {
 			charBuffer.position(0);
 			charBuffer.limit(length);
 			encoder.reset();
-			encoder.encode(charBuffer, dest, true);
-			countBytes += dest.position();
-			dest.clear();
+			encoder.encode(charBuffer, buffySummers, true);
+			countBytes += buffySummers.position();
+			buffySummers.clear();
 		}
 		return countBytes;
 	}
