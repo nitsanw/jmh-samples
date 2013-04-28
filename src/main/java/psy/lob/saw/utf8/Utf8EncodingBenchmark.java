@@ -19,31 +19,31 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 
 @State(Scope.Thread)
-public class Utf8EncodingBenchmark  {
+public class Utf8EncodingBenchmark {
 	// experiment test input
 	private List<String> strings = new ArrayList<String>();
-	
+
 	// CharsetEncoder helper buffers
 	private char[] chars;
 	private CharBuffer charBuffer;
 	private CharsetEncoder encoder;
-	
+
 	// My own encoder
 	private CustomUtf8Encoder customEncoder;
-	
+
 	// Destination buffer, the slayer
 	private ByteBuffer buffySummers;
 
 	@Setup
 	public void init() {
-		boolean useDirectBuffer = Boolean.getBoolean("Utf8EncodingBenchmark.directBuffer");
+		boolean useDirectBuffer = Boolean
+		        .getBoolean("Utf8EncodingBenchmark.directBuffer");
 		InputStream testTextStream = null;
 		InputStreamReader inStreamReader = null;
 		BufferedReader buffReader = null;
 		try {
 			testTextStream = getClass().getResourceAsStream("/Utf8Samples.txt");
-			inStreamReader = new InputStreamReader(
-					testTextStream, "UTF-8");
+			inStreamReader = new InputStreamReader(testTextStream, "UTF-8");
 			buffReader = new BufferedReader(inStreamReader);
 			String line;
 			while ((line = buffReader.readLine()) != null) {
@@ -51,8 +51,7 @@ public class Utf8EncodingBenchmark  {
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}
-		finally{
+		} finally {
 			closeStream(testTextStream);
 			closeReader(inStreamReader);
 			closeReader(buffReader);
@@ -70,24 +69,24 @@ public class Utf8EncodingBenchmark  {
 	}
 
 	private void closeStream(InputStream inStream) {
-	    if(inStream != null){
-	    	try {
-	            inStream.close();
-	        } catch (IOException e) {
-	        	throw new RuntimeException(e);
-	        }
-	    }
-    }
+		if (inStream != null) {
+			try {
+				inStream.close();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
 
 	private void closeReader(Reader buffReader) {
-	    if(buffReader != null){
-	    	try {
-	            buffReader.close();
-	        } catch (IOException e) {
-	        	throw new RuntimeException(e);
-	        }
-	    }
-    }
+		if (buffReader != null) {
+			try {
+				buffReader.close();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
 
 	@GenerateMicroBenchmark
 	public int customEncoder() {
@@ -99,7 +98,7 @@ public class Utf8EncodingBenchmark  {
 		}
 		return countBytes;
 	}
-	
+
 	@GenerateMicroBenchmark
 	public int stringGetBytes() throws UnsupportedEncodingException {
 		int countBytes = 0;
@@ -110,6 +109,7 @@ public class Utf8EncodingBenchmark  {
 		}
 		return countBytes;
 	}
+
 	@GenerateMicroBenchmark
 	public int charsetEncoder() throws UnsupportedEncodingException {
 		int countBytes = 0;
