@@ -9,7 +9,7 @@ import org.openjdk.jmh.annotations.State;
 
 public class FalseSharingBenchmarkLazySet {
     private final static int LONGS_IN_CACHELINE = Integer.getInteger("longs.in.cacheline", 8);
-    private final static int NUMBER_OF_THREADS = Integer.getInteger("threads", 8);
+    private final static int NUMBER_OF_THREADS = Integer.getInteger("threads", 32);
     private final static AtomicInteger THREAD_INDEX = new AtomicInteger(0);
 
     @State(Scope.Benchmark)

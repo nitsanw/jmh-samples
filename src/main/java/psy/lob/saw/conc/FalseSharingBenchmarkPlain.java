@@ -8,7 +8,7 @@ import org.openjdk.jmh.annotations.State;
 
 public class FalseSharingBenchmarkPlain {
     final static int LONGS_IN_CACHELINE = Integer.getInteger("longs.in.cacheline", 8);
-    final static int NUMBER_OF_THREADS = Integer.getInteger("threads", 8);
+    final static int NUMBER_OF_THREADS = Integer.getInteger("threads", 32);
     final static AtomicInteger THREAD_INDEX = new AtomicInteger(0);
 
     @State(Scope.Benchmark)
