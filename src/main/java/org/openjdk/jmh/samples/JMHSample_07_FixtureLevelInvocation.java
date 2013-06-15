@@ -24,7 +24,8 @@
  */
 package org.openjdk.jmh.samples;
 
-import org.openjdk.jmh.annotations.BenchmarkType;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.GenerateMicroBenchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
@@ -54,7 +55,9 @@ public class JMHSample_07_FixtureLevelInvocation {
     /*
      * Fixtures have different Levels to control when they are about to run.
      * Level.Invocation is useful sometimes to do some per-invocation work,
-     * which should not count as payload.
+     * which should not count as payload. Note the timestamping and
+     * synchronization for Level.Invocation helpers might significantly
+     * offset the measurement, use with care.
      *
      * Consider this sample:
      */
@@ -101,12 +104,14 @@ public class JMHSample_07_FixtureLevelInvocation {
      * when we are sleeping.
      */
 
-    @GenerateMicroBenchmark(BenchmarkType.AverageTimePerOp)
+    @GenerateMicroBenchmark
+    @BenchmarkMode(Mode.AverageTime)
     public double measureHot(NormalState e, final Scratch s) throws ExecutionException, InterruptedException {
         return e.service.submit(new Task(s)).get();
     }
 
-    @GenerateMicroBenchmark(BenchmarkType.AverageTimePerOp)
+    @GenerateMicroBenchmark
+    @BenchmarkMode(Mode.AverageTime)
     public double measureCold(LaggingState e, final Scratch s) throws ExecutionException, InterruptedException {
         return e.service.submit(new Task(s)).get();
     }
