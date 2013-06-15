@@ -1,11 +1,11 @@
-package psy.lob.saw.utf8;
+package psy.lob.saw.util;
 
 import java.lang.reflect.Field;
 
 import sun.misc.Unsafe;
 
 public class UnsafeAccess {
-	public static final Unsafe unsafe;
+	public static final Unsafe UNSAFE;
 	static {
 		try {
 			// This is a bit of voodoo to force the unsafe object into
@@ -15,7 +15,7 @@ public class UnsafeAccess {
 			// taken away.
 			Field field = Unsafe.class.getDeclaredField("theUnsafe");
 			field.setAccessible(true);
-			unsafe = (Unsafe) field.get(null);
+			UNSAFE = (Unsafe) field.get(null);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

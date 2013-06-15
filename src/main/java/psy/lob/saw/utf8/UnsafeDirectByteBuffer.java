@@ -4,13 +4,15 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import psy.lob.saw.util.UnsafeAccess;
+
 public class UnsafeDirectByteBuffer {
 	private static final long addressOffset;
 	public static final int CACHE_LINE_SIZE = 64;
-	public static final int PAGE_SIZE = UnsafeAccess.unsafe.pageSize();
+	public static final int PAGE_SIZE = UnsafeAccess.UNSAFE.pageSize();
 	static {
 		try {
-			addressOffset = UnsafeAccess.unsafe.objectFieldOffset(Buffer.class
+			addressOffset = UnsafeAccess.UNSAFE.objectFieldOffset(Buffer.class
 			        .getDeclaredField("address"));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -18,7 +20,7 @@ public class UnsafeDirectByteBuffer {
 	}
 
 	public static long getAddress(ByteBuffer buffy) {
-		return UnsafeAccess.unsafe.getLong(buffy, addressOffset);
+		return UnsafeAccess.UNSAFE.getLong(buffy, addressOffset);
 	}
 
 	/**
@@ -28,11 +30,11 @@ public class UnsafeDirectByteBuffer {
 	 * @param b
 	 */
 	public static void putByte(long address, int position, byte b) {
-		UnsafeAccess.unsafe.putByte(address + (position << 0), b);
+		UnsafeAccess.UNSAFE.putByte(address + (position << 0), b);
 	}
 
 	public static void putByte(long address, byte b) {
-		UnsafeAccess.unsafe.putByte(address, b);
+		UnsafeAccess.UNSAFE.putByte(address, b);
 	}
 
 	public static ByteBuffer allocateAlignedByteBuffer(int capacity, long align) {
