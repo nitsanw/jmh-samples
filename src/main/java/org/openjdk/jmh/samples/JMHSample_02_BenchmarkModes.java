@@ -24,25 +24,30 @@
  */
 package org.openjdk.jmh.samples;
 
-import org.openjdk.jmh.annotations.BenchmarkType;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.GenerateMicroBenchmark;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 
 import java.util.concurrent.TimeUnit;
 
-public class JMHSample_02_BenchmarkTypes {
+public class JMHSample_02_BenchmarkModes {
 
     /*
-     * JMH generates lots of synthetic code for the microbenchmarks for you during
-     * the compilation. We can request different generation strategies, and measure
-     * different things.
+     * JMH generates lots of synthetic code for the microbenchmarks for
+     * you during the compilation. JMH can measure the methods in lots
+     * of modes, and it will generate all the needed code at once.
+     * Users may select the default benchmark mode with the special
+     * annotation, or select/override the mode via the command line.
      *
-     * With this scenario, we start to measure something useful. Note that we can
-     * conveniently have the exception at the benchmark method, in order to reduce
-     * some of the clutter.
+     * With this scenario, we start to measure something useful. Note
+     * that we can conveniently have the exception at the benchmark method,
+     * in order to reduce some of the clutter.
      *
-     * P.S. It is helping at times to look into the generated code trying to diagnose
-     * the performance issue. You might see you don't measuring it right!
+     * P.S. It is helping at times to look into the generated code trying
+     * to diagnose  the performance issue. You might see you don't measuring
+     * it right! The generated code for this particular sample is somewhere at
+     *  target/generated-sources/annotations/.../JMHSample_02_BenchmarkModes.java
      */
 
     /*
@@ -51,8 +56,9 @@ public class JMHSample_02_BenchmarkTypes {
      * although you can use the default.
      */
 
+    @GenerateMicroBenchmark
+    @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.SECONDS)
-    @GenerateMicroBenchmark(BenchmarkType.OpsPerTimeUnit)
     public void measureThroughput() throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(100);
     }
@@ -63,8 +69,9 @@ public class JMHSample_02_BenchmarkTypes {
      * There are workloads where measuring times is more convenient though.
      */
 
+    @GenerateMicroBenchmark
+    @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.MICROSECONDS)
-    @GenerateMicroBenchmark(BenchmarkType.AverageTimePerOp)
     public void measureAvgTime() throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(100);
     }
@@ -79,8 +86,9 @@ public class JMHSample_02_BenchmarkTypes {
      * JMH also tries to auto-adjust sampling frequency: if the method
      * is long enough, you will end up capturing all the samples.
      */
+    @GenerateMicroBenchmark
+    @BenchmarkMode(Mode.SampleTime)
     @OutputTimeUnit(TimeUnit.MICROSECONDS)
-    @GenerateMicroBenchmark(BenchmarkType.SampleTimePerOp)
     public void measureSamples() throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(100);
     }
@@ -91,9 +99,22 @@ public class JMHSample_02_BenchmarkTypes {
      * do not want to call the benchmark method continuously.
      */
 
+    @GenerateMicroBenchmark
+    @BenchmarkMode(Mode.SingleShotTime)
     @OutputTimeUnit(TimeUnit.MICROSECONDS)
-    @GenerateMicroBenchmark(BenchmarkType.SingleShotTime)
     public void measureSingleShot() throws InterruptedException {
+        TimeUnit.MILLISECONDS.sleep(100);
+    }
+
+    /*
+     * We can also ask for multiple benchmark modes at once. All the tests
+     * above can be replaced with just a single test like this:
+     */
+
+    @GenerateMicroBenchmark
+    @BenchmarkMode({Mode.Throughput, Mode.AverageTime, Mode.SampleTime, Mode.SingleShotTime})
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    public void measureAll() throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(100);
     }
 
