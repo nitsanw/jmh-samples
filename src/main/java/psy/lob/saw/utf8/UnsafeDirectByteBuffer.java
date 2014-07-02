@@ -30,7 +30,7 @@ public class UnsafeDirectByteBuffer {
 	 * @param b
 	 */
 	public static void putByte(long address, int position, byte b) {
-		UnsafeAccess.UNSAFE.putByte(address + (position << 0), b);
+		UnsafeAccess.UNSAFE.putByte(address + position, b);
 	}
 
 	public static void putByte(long address, byte b) {

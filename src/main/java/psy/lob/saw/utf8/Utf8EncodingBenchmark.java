@@ -13,7 +13,7 @@ import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openjdk.jmh.annotations.GenerateMicroBenchmark;
+import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -88,7 +88,7 @@ public class Utf8EncodingBenchmark {
 		}
 	}
 
-	@GenerateMicroBenchmark
+	@Benchmark
 	public int customEncoder() {
 		int countBytes = 0;
 		for (int stringIndex = 0; stringIndex < strings.size(); stringIndex++) {
@@ -99,7 +99,7 @@ public class Utf8EncodingBenchmark {
 		return countBytes;
 	}
 
-	@GenerateMicroBenchmark
+	@Benchmark
 	public int stringGetBytes() throws UnsupportedEncodingException {
 		int countBytes = 0;
 		for (int stringIndex = 0; stringIndex < strings.size(); stringIndex++) {
@@ -110,7 +110,7 @@ public class Utf8EncodingBenchmark {
 		return countBytes;
 	}
 
-	@GenerateMicroBenchmark
+	@Benchmark
 	public int charsetEncoder() throws UnsupportedEncodingException {
 		int countBytes = 0;
 		for (int stringIndex = 0; stringIndex < strings.size(); stringIndex++) {

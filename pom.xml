@@ -42,13 +42,15 @@ questions.
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.9.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>0.9.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
-
-    <prerequisites>
-        <maven>3.0</maven>
-    </prerequisites>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -59,20 +61,11 @@ questions.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.0</version>
                 <configuration>
                     <compilerVersion>1.7</compilerVersion>
                     <source>1.7</source>
                     <target>1.7</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12</version>
-                <configuration>
-                    <forkMode>always</forkMode>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
             <plugin>
@@ -92,28 +85,12 @@ questions.
                                     <mainClass>org.openjdk.jmh.Main</mainClass>
                                 </transformer>
                             </transformers>
-                            <filters>
-                                <!-- Remove annotation processor files -->
-                                <filter>
-                                    <artifact>oracle.micro:MicroBenchmarkAnnotationProcessor</artifact>
-                                    <excludes>
-                                        <exclude>*/**</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>Local</id>
-            <url>file://${project.basedir}/m2-repo/</url>
-        </repository>
-    </repositories>
 </project>
 
 

@@ -2,7 +2,7 @@ package psy.lob.saw.conc;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.openjdk.jmh.annotations.GenerateMicroBenchmark;
+import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 
@@ -33,13 +33,13 @@ public class FalseSharingBenchmarkPlain {
         private final int noSharingIndex = LONGS_IN_CACHELINE + (falseSharedIndex - LONGS_IN_CACHELINE) * LONGS_IN_CACHELINE;
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void measureUnshared(SharedCounters counters, ThreadIndex index) {
         long value = counters.array[index.noSharingIndex];
         counters.array[index.noSharingIndex] = value + 1;
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void measureShared(SharedCounters counters, ThreadIndex index) {
         long value = counters.array[index.falseSharedIndex];
         counters.array[index.falseSharedIndex] = value + 1;

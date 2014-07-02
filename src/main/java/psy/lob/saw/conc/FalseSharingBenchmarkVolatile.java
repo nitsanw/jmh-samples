@@ -3,7 +3,7 @@ package psy.lob.saw.conc;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLongArray;
 
-import org.openjdk.jmh.annotations.GenerateMicroBenchmark;
+import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 
@@ -35,13 +35,13 @@ public class FalseSharingBenchmarkVolatile {
                 * LONGS_IN_CACHELINE;
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void measureUnshared(SharedCounters counters, ThreadIndex index) {
         long value = counters.array.get(index.noSharingIndex);
         counters.array.set(index.noSharingIndex, value + 1);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void measureShared(SharedCounters counters, ThreadIndex index) {
         long value = counters.array.get(index.falseSharedIndex);
         counters.array.set(index.falseSharedIndex, value + 1);

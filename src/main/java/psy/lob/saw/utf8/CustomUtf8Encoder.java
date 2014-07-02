@@ -10,7 +10,6 @@ import sun.nio.cs.Surrogate;
  * encoding strings that should fit into a byte buffer.
  * 
  * @author nitsan
- * 
  */
 public class CustomUtf8Encoder {
 
@@ -52,7 +51,7 @@ public class CustomUtf8Encoder {
 
 		// pluck the chars array out of the String, saving us an array copy
 		CoderResult result = encode(UnsafeString.getChars(src), spCurr, sl,
-		        UnsafeDirectByteBuffer.getAddress(dst), dp, dl);
+				UnsafeDirectByteBuffer.getAddress(dst), dp, dl);
 		// only move the position if we fit the whole thing in.
 		if (lastDp != 0)
 			dst.position(lastDp);
@@ -81,14 +80,13 @@ public class CustomUtf8Encoder {
 	 * @return UNDERFLOW is successful, OVERFLOW/ERROR otherwise
 	 */
 	private final CoderResult encode(char[] sa, int spCurr, int sl,
-	        long dAddress, int dp, int dl) {
+			long dAddress, int dp, int dl) {
 		lastSp = spCurr;
 		int dlASCII = Math.min(sl - lastSp, dl - dp);
 		// handle ascii encoded strings in an optimised loop
 		while (dp < dlASCII && sa[lastSp] < 128)
 			// TODO: could arguably skip this utility and compute the target
-			// address
-			// directly...
+			// address directly...
 			UnsafeDirectByteBuffer.putByte(dAddress, dp++, (byte) sa[lastSp++]);
 
 		while (lastSp < sl) {
@@ -101,9 +99,9 @@ public class CustomUtf8Encoder {
 				if (dl - dp < 2)
 					return CoderResult.OVERFLOW;
 				UnsafeDirectByteBuffer.putByte(dAddress, dp++,
-				        (byte) (0xC0 | (c >> 6)));
+						(byte) (0xC0 | (c >> 6)));
 				UnsafeDirectByteBuffer.putByte(dAddress, dp++,
-				        (byte) (0x80 | (c & 0x3F)));
+						(byte) (0x80 | (c & 0x3F)));
 			} else if (Surrogate.is(c)) {
 				int uc = sgp.parse((char) c, sa, lastSp, sl);
 				if (uc < 0) {
@@ -113,23 +111,23 @@ public class CustomUtf8Encoder {
 				if (dl - dp < 4)
 					return CoderResult.OVERFLOW;
 				UnsafeDirectByteBuffer.putByte(dAddress, dp++,
-				        (byte) (0xF0 | uc >> 18));
+						(byte) (0xF0 | uc >> 18));
 				UnsafeDirectByteBuffer.putByte(dAddress, dp++,
-				        (byte) (0x80 | uc >> 12 & 0x3F));
+						(byte) (0x80 | uc >> 12 & 0x3F));
 				UnsafeDirectByteBuffer.putByte(dAddress, dp++,
-				        (byte) (0x80 | uc >> 6 & 0x3F));
+						(byte) (0x80 | uc >> 6 & 0x3F));
 				UnsafeDirectByteBuffer.putByte(dAddress, dp++,
-				        (byte) (0x80 | uc & 0x3F));
+						(byte) (0x80 | uc & 0x3F));
 				++lastSp;
 			} else {
 				if (dl - dp < 3)
 					return CoderResult.OVERFLOW;
 				UnsafeDirectByteBuffer.putByte(dAddress, dp++,
-				        (byte) (0xE0 | c >> 12));
+						(byte) (0xE0 | c >> 12));
 				UnsafeDirectByteBuffer.putByte(dAddress, dp++,
-				        (byte) (0x80 | c >> 6 & 0x3F));
+						(byte) (0x80 | c >> 6 & 0x3F));
 				UnsafeDirectByteBuffer.putByte(dAddress, dp++,
-				        (byte) (0x80 | c & 0x3F));
+						(byte) (0x80 | c & 0x3F));
 			}
 			++lastSp;
 		}
@@ -148,7 +146,7 @@ public class CustomUtf8Encoder {
 
 		try {
 			CoderResult result = encode(UnsafeString.getChars(src), spCurr, sl,
-			        dst.array(), dp, dl);
+					dst.array(), dp, dl);
 			dst.position(lastDp - arrayOffset);
 			return result;
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -158,7 +156,7 @@ public class CustomUtf8Encoder {
 	}
 
 	private CoderResult encode(char[] sa, int spCurr, int sl, byte[] da,
-	        int dp, int dl) {
+			int dp, int dl) {
 		lastSp = spCurr;
 		int dlASCII = dp + Math.min(sl - lastSp, dl - dp);
 		// handle ascii encoded strings in an optimised loop
@@ -167,9 +165,8 @@ public class CustomUtf8Encoder {
 
 		// we are counting on the JVM array boundary checks to throw an
 		// exception rather then
-		// checkin boundaries ourselves... no nice, and potentailly not that
-		// much of a
-		// performance enhancement.
+		// checking boundaries ourselves... no nice, and potentially not that
+		// much of a performance enhancement.
 		while (lastSp < sl) {
 			int c = sa[lastSp];
 			if (c < 128) {
