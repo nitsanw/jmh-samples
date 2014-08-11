@@ -1,4 +1,4 @@
-package psy.lob.saw.conc;
+package psy.lob.saw;
 
 import java.util.concurrent.TimeUnit;
 
