@@ -47,4 +47,22 @@ public class LoopyBenchmarks {
 			fox.consume(sunn[y]);
 		}
 	}
+	
+	@Benchmark
+	public int sumOldLoop() {
+		int sum = 0;
+		for (int y = 0; y < bunn.length; y++) {
+			sum += bunn[y];
+		}
+		return sum;
+	}
+	
+	@Benchmark
+	public int sumSweetLoop() {
+		int sum = 0;
+		for (byte bunny : bunn) {
+			sum += bunny;
+		}
+		return sum;
+	}
 }
