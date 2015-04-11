@@ -22,4 +22,19 @@ public class BaselineBenchmarks {
 	public void increment() {
 		i++;
 	}
+	
+    @Benchmark
+    public int incrementConsume() {
+        return i++;
+    }
+    
+    @Benchmark
+    public int consume() {
+        return i;
+    }
+    
+    @Benchmark
+    public int consumeAdd() {
+        return i + 1;
+    }
 }
